@@ -1,0 +1,10 @@
+# Librerías externas: cada quien las descarga (ver README, "Cómo ejecutarlo")
+libs/
+
+# Visual Studio Code
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
