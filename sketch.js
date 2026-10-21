@@ -75,7 +75,7 @@ function setup() {
 
   Fisica.alPerderCuerpo(() => {
     if (estadoActual === ESTADOS.JUGANDO && bebe && bebe.estado !== 'comiendo' && bebe.estado !== 'satisfecho') {
-      fallarNivel('¡El biberón cayó al vacío!');
+      fallarNivel('¡El caramelo cayó al vacío!');
     }
   });
 
@@ -249,7 +249,7 @@ function actualizarLogicaJuego(dt) {
     const by = biberon.position.y;
 
     if (by < -45 || by > height + 80 || bx < -45 || bx > width + 45) {
-      fallarNivel('¡El biberón salió de la pantalla!');
+      fallarNivel('¡El caramelo salió de la pantalla!');
       return;
     }
 
@@ -279,7 +279,7 @@ function actualizarLogicaJuego(dt) {
         Sonidos.golpePeligro();
         crearParticulasImpacto(bx, by);
         Fisica.soltarCuerpoPrincipal();
-        fallarNivel('¡El biberón chocó contra los pinchos!');
+        fallarNivel('¡El caramelo chocó contra los pinchos!');
         break;
       }
     }
@@ -903,11 +903,11 @@ function dibujarPantallaAyuda() {
   const tips = [
     '•  Corta las cuerdas arrastrando el mouse con el botón izquierdo.',
     '•  Recolecta las 3 estrellas doradas que hay en cada nivel.',
-    '•  Alimenta al bebé dejando caer el biberón directamente en su boca.',
-    '•  Las burbujas hacen flotar el biberón. Haz clic en ellas para explotarlas.',
-    '•  Haz clic en el fuelle cuando el biberón esté cerca para empujar la burbuja.',
+    '•  Alimenta al bebé dejando caer el caramelo directamente en su boca.',
+    '•  Las burbujas hacen flotar el caramelo. Haz clic en ellas para explotarlas.',
+    '•  Haz clic en el fuelle cuando el caramelo esté cerca para empujar la burbuja.',
     '•  Evita los pinchos y salirte de la pantalla para no perder.',
-    '•  Teclado: R (Reiniciar), M (Silenciar), Esc (Menú principal).',
+    '•  Atajos de teclado: R (Reiniciar), M (Silenciar sonido).',
   ];
 
   let ty = 140;

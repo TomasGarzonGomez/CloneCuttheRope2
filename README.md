@@ -8,13 +8,11 @@ Funciona **100% sin conexión** gracias a las librerías incluidas en `libs/`. E
 
 ## Como Ejecutarlo
 
-No requiere Node.js, compilacion ni conexion a internet. Solo un navegador moderno (Chrome, Edge o Firefox).
+No requiere Node.js, compilacion ni conexion a internet.
 
 1. Abre la carpeta del proyecto en cualquier editor con soporte para servidor local (se recomienda **Visual Studio Code** con la extension **Live Server**).
-2. Haz clic derecho en `index.html` y selecciona **Open with Live Server**, o abrelo directamente en el navegador (doble clic sobre `index.html`).
+2. Haz clic derecho en `index.html` y selecciona **Open with Live Server**, o abrelo directamente en el navegador.
 3. El lienzo escala automaticamente para ocupar toda la ventana.
-
-> **Importante:** la carpeta `libs/` debe contener `matter.min.js` y `p5.min.js`. Esta carpeta esta excluida en `.gitignore`, asi que si clonaste el repositorio y no existe, consulta la seccion [Librerias](#librerias).
 
 ### Ejecucion en Local
 
@@ -40,8 +38,7 @@ Abrir `http://localhost:8000` en el navegador.
 | Reventar burbuja | Clic sobre la burbuja o trazar un corte sobre ella |
 | Activar fuelle de aire | Clic sobre el cojin de aire |
 | Reiniciar nivel | Boton de reinicio en el HUD o tecla R |
-| Ir al selector de niveles | Boton de niveles en el HUD |
-| Volver al menu principal | Tecla Escape |
+| Ir al selector de niveles | Boton de niveles en el HUD o tecla Escape |
 | Silenciar / activar sonido | Boton de audio en el HUD o tecla M |
 
 ---
@@ -49,7 +46,7 @@ Abrir `http://localhost:8000` en el navegador.
 ## Estructura del Proyecto
 
 ```
-CloneCuttheRope/
+taller-2/
 ├── index.html      Punto de entrada: configura el lienzo responsive y carga los scripts.
 ├── libs/
 │   ├── matter.min.js   Motor de fisica (Matter.js 0.20.0), incluido para uso offline.
@@ -59,7 +56,6 @@ CloneCuttheRope/
 ├── sonidos.js      Sintetizador Web Audio API: cortes, estrellas, burbuja, fuelle y UI.
 ├── niveles.js      Definicion de los 5 niveles: coordenadas, cuerdas, obstaculos y mecanicas.
 ├── sketch.js       Bucle principal: maquina de estados, renderizado y logica de juego.
-├── .gitignore      Excluye libs/, configuracion de VS Code y archivos del sistema.
 └── README.md       Este archivo.
 ```
 
@@ -77,17 +73,12 @@ El modulo `fisica.js` encapsula toda la simulacion y expone una API publica al r
 | Rebote | 0.3 | Coeficiente de restitucion en colisiones |
 | Paso fisico | 1000 / 60 ms | Simulacion determinista a 60 Hz |
 | Max pasos por frame | 4 | Evita espiral de muerte en frames lentos |
-| Iteraciones (posicion / velocidad / restriccion) | 8 / 6 / 12 | Precision del solver de Matter.js |
 | Rigidez de cuerdas | 1.0 | Restricciones inextensibles |
 | Amortiguacion de cuerdas | 0.05 | Reduce vibracion de los nodos |
-| Masa por nodo de cuerda | 0.1 | Nodos livianos para que la cuerda no arrastre al biberon |
-| Limite inferior | Alto del canvas + 80 px | Por debajo de esta altura el biberon se da por perdido |
 
 ### Cuerdas
 
 Cada cuerda es una cadena de nodos rigidos conectados por restricciones de distancia fija. El corte se detecta calculando la interseccion geometrica entre el trazo del mouse y cada segmento de la cadena. Al cortar, la restriccion se desactiva y los nodos quedan libres.
-
-Las cuerdas solo trabajan a **tension**: cuando un segmento queda mas corto que el 98 % de su longitud de reposo, su rigidez se anula temporalmente para que la cuerda se doble como una cuerda real en lugar de comportarse como una varilla.
 
 ### Burbujas
 
@@ -95,7 +86,7 @@ Cuando el biberon entra en contacto con una burbuja, la gravedad del cuerpo se c
 
 ### Fuelles de Aire
 
-Al activar un fuelle, se aplica un impulso unico al biberon. El impulso solo actua si el biberon esta dentro de un radio de 175 px y dentro de un cono de aprox. ±49 grados (0.85 rad) alrededor de la direccion del fuelle. La magnitud se atenua con la distancia.
+Al activar un fuelle, se aplica un impulso unico al biberon. El impulso solo actua si el biberon esta dentro de un radio de 175 px y dentro de un cono de aprox. 49 grados centrado en la direccion del fuelle. La magnitud se atenua con la distancia.
 
 ---
 
@@ -110,28 +101,12 @@ Al activar un fuelle, se aplica un impulso unico al biberon. El impulso solo act
 
 ---
 
-## El Bebe
-
-El modulo `bebe.js` controla al personaje objetivo. Detecta la captura comprobando si la tetina del biberon paso a menos de 55 px de la cabeza durante el ultimo frame (distancia punto-segmento), de modo que no se "salta" al bebe aunque el biberon caiga muy rapido.
-
-| Estado | Comportamiento |
-|---|---|
-| Llorando | Estado inicial. Llora, tiembla y suelta lagrimas. |
-| Ansioso | Cuando el biberon esta a menos de 220 px: ojos grandes que siguen al biberon y agita las manos. |
-| Comiendo | El biberon se acomoda en la boca (280 ms), se vacia (1600 ms) y desaparece (350 ms). |
-| Satisfecho | Sonrie y suelta corazones. Dispara la pantalla de nivel completado. |
-
----
-
 ## Estados del Juego
 
 ```
 MENU  ->  SELECTOR  ->  JUGANDO  ->  NIVEL_SUPERADO  ->  siguiente nivel o MENU
-  |                              ->  GAME_OVER       ->  reintentar o SELECTOR
-  └──>  AYUDA  ->  MENU
+                                 ->  GAME_OVER       ->  reintentar o SELECTOR
 ```
-
-La tecla Escape regresa al `MENU` desde cualquier estado.
 
 El progreso (nivel desbloqueado y estrellas por nivel) se persiste en `localStorage` bajo la clave `cut_the_rope_progreso_v2`.
 
@@ -160,29 +135,7 @@ El sonido se genera en tiempo real con la **Web Audio API**, sin archivos extern
 | Burbuja: entrar | Sine | Sweep ascendente suave |
 | Burbuja: explotar | Triangle | Pop descendente corto |
 | Fuelle de aire | Triangle | Soplido grave corto |
-| Bebe come | Sine | Arpegio rapido de 4 notas |
 | Nivel completado | Triangle | Arpegio ascendente de 4 notas |
 | Derrota | Sawtooth | Descenso grave |
 | Pinchos | Square | Impacto bajo |
 | Boton UI | Sine | Tick corto agudo |
-
----
-
-## Librerias
-
-El juego usa dos librerias que se cargan desde `libs/` para funcionar sin conexion. Si la carpeta no existe (por ejemplo, al clonar el repositorio), crea `libs/` y descarga ahi estos archivos con exactamente estos nombres:
-
-| Archivo | Version | Descarga |
-|---|---|---|
-| `libs/matter.min.js` | 0.20.0 | https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js |
-| `libs/p5.min.js` | 1.11.3 | https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js |
-
----
-
-## Solucion de Problemas
-
-| Problema | Solucion |
-|---|---|
-| Pantalla en blanco | Abre la consola del navegador (F12). Si aparece `Matter is not defined` o `setup is not defined`, faltan los archivos de `libs/`. |
-| No hay sonido | El navegador bloquea el audio hasta la primera interaccion: haz clic en cualquier parte. Verifica tambien que no este silenciado (tecla M). |
-| Reiniciar el progreso | En la consola del navegador ejecuta `localStorage.removeItem('cut_the_rope_progreso_v2')` y recarga la pagina. |
